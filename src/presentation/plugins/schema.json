@@ -1,0 +1,243 @@
+{
+  "$id": "dto",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "GeneralErrorDTO": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      },
+      "required": ["message"],
+      "additionalProperties": false
+    },
+    "UserAccessTokenPayloadDTO": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        }
+      },
+      "required": ["id", "email"],
+      "additionalProperties": false
+    },
+    "UserDeviceDTO": {
+      "type": "object",
+      "properties": {
+        "ip": {
+          "type": "string"
+        },
+        "os": {
+          "type": "string"
+        },
+        "browser": {
+          "type": "string"
+        },
+        "fingerprint": {
+          "type": "string"
+        }
+      },
+      "required": ["ip", "os", "browser", "fingerprint"],
+      "additionalProperties": false
+    },
+    "TokenPairDTO": {
+      "type": "object",
+      "properties": {
+        "accessToken": {
+          "type": "string"
+        },
+        "refreshToken": {
+          "type": "string"
+        }
+      },
+      "required": ["accessToken", "refreshToken"],
+      "additionalProperties": false
+    },
+    "SentenceDTO": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "fullText": {
+          "type": "string"
+        },
+        "wordToLearn": {
+          "type": "string"
+        },
+        "options": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "source": {
+          "type": "string"
+        }
+      },
+      "required": ["id", "fullText", "wordToLearn", "options", "source"],
+      "additionalProperties": false
+    },
+    "MeaningDTO": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "term": {
+          "type": "string"
+        },
+        "partOfSpeech": {
+          "type": "string"
+        },
+        "meaning": {
+          "type": "string"
+        },
+        "synonyms": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "antonyms": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "sentences": {
+          "type": "array",
+          "items": {
+            "$ref": "SentenceDTO"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "term",
+        "partOfSpeech",
+        "meaning",
+        "synonyms",
+        "antonyms",
+        "sentences"
+      ],
+      "additionalProperties": false
+    },
+    "UserWordDTO": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "word": {
+          "type": "string"
+        },
+        "transcription": {
+          "type": "string"
+        },
+        "audio": {
+          "type": ["string", "null"]
+        },
+        "meanings": {
+          "type": "array",
+          "items": {
+            "$ref": "MeaningDTO"
+          }
+        },
+        "source": {
+          "$ref": "WordDefinitionSourceType"
+        },
+        "level": {
+          "type": "number"
+        },
+        "lastTimeRecalledCorrectly": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "timeQuotient": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "id",
+        "word",
+        "transcription",
+        "meanings",
+        "source",
+        "level",
+        "lastTimeRecalledCorrectly",
+        "timeQuotient"
+      ],
+      "additionalProperties": false
+    },
+    "WordDefinitionSourceType": {
+      "$ref": "$Enums.WordDefinitionSourceType"
+    },
+    "$Enums.WordDefinitionSourceType": {
+      "type": "string",
+      "enum": ["DICTIONARY_API", "OTHER"]
+    },
+    "RecapSetDTO": {
+      "type": "array",
+      "items": {
+        "$ref": "UserWordDTO"
+      }
+    },
+    "UserDTO": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "words": {
+          "type": "array",
+          "items": {
+            "$ref": "UserWordDTO"
+          }
+        }
+      },
+      "required": ["id", "words"],
+      "additionalProperties": false
+    },
+    "AuthDTO": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "$ref": "UserDTO"
+        },
+        "token": {
+          "$ref": "TokenPairDTO"
+        }
+      },
+      "required": ["user", "token"],
+      "additionalProperties": false
+    },
+    "GoogleAuthDTO": {
+      "type": "object",
+      "properties": {
+        "accessToken": {
+          "type": "string"
+        },
+        "refreshToken": {
+          "type": "string"
+        },
+        "user": {
+          "$ref": "UserAccessTokenPayloadDTO"
+        }
+      },
+      "required": ["accessToken", "refreshToken", "user"],
+      "additionalProperties": false
+    }
+  }
+}
