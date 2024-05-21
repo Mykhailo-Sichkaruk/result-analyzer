@@ -9,16 +9,19 @@ export const startResultAnalyzerService = async () => {
   const testReportCollection = db.collection("testReports");
 
   consumeTestResults(async (msg) => {
+    log.info("Received test result", msg);
     await testResultCollection.insertOne(msg);
     const analysis = analyzeResult(msg);
     const report = generateReport(analysis);
-    log.info("Report generated:", report);
     await testReportCollection.insertOne(report);
+    log.info("Report generated and saved to the database with the results", report);
   });
 };
 
 export const getReports = async () => {
   const db = await connectToDatabase();
   const collection = db.collection("testReports");
-  return collection.find({}).toArray();
+  const result = collection.find({}).toArray();
+  log.info("Get reports", result);
+  return result;
 };
