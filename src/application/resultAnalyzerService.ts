@@ -1,30 +1,20 @@
+import { log } from "#infrastructure/log.js";
 import { connectToDatabase } from "#infrastructure/db.js";
-import { Channel, ConsumeMessage } from "amqplib";
 import { analyzeResult, generateReport } from "#utils/analyzeUtils.js";
-import { connectRabbitMQ } from "./rabbitmqService.js";
-
-const RESULT_QUEUE = "result_queue";
+import { consumeTestResults } from "./rabbitmqService.js";
 
 export const startResultAnalyzerService = async () => {
   const db = await connectToDatabase();
-  const collection = db.collection("testResults");
-  const channel: Channel = await connectRabbitMQ();
+  const testResultCollection = db.collection("testResults");
+  const testReportCollection = db.collection("testReports");
 
-  channel.consume(RESULT_QUEUE, async (msg: ConsumeMessage | null) => {
-    if (msg) {
-      const testResult = JSON.parse(msg.content.toString());
-      await collection.insertOne(testResult);
-      await collection.insertOne(testResult);
-      const reportCollection = db.collection("testReports");
-      const analysis = analyzeResult(testResult);
-      const report = generateReport(analysis);
-      console.log("Report generated:", report);
-      await reportCollection.insertOne(report);
-      channel.ack(msg);
-    }
+  consumeTestResults(async (msg) => {
+    await testResultCollection.insertOne(msg);
+    const analysis = analyzeResult(msg);
+    const report = generateReport(analysis);
+    log.info("Report generated:", report);
+    await testReportCollection.insertOne(report);
   });
-
-  console.log(`Listening for messages on ${RESULT_QUEUE}`);
 };
 
 export const getReports = async () => {

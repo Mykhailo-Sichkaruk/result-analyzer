@@ -7,7 +7,10 @@ const start = async () => {
   try {
     await createQueues(); // Ensure RabbitMQ queues are created
     await startHttpServer();
-    await startResultAnalyzerService();
+    log.info("Start repetative checking of result queue");
+    setInterval(async () => {
+        await startResultAnalyzerService();
+    }, 10000);
   } catch (err) {
     log.fatal(err);
     process.exit(1);
