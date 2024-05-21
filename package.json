@@ -51,6 +51,8 @@
     "@sinclair/typebox": "^0.32.30",
     "@types/ajv": "^1.0.0",
     "ajv": "^8.13.0",
+    "ajv-errors": "^3.0.0",
+    "ajv-formats": "^3.0.1",
     "amqplib": "^0.10.4",
     "fastify": "^4.27.0",
     "fastify-user-agent": "^1.0.1",

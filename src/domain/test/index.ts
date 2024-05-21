@@ -1,4 +1,6 @@
 import { Type, Static } from "@sinclair/typebox";
+import { Ajv } from "ajv";
+import addFormats from "ajv-formats";
 
 // Test entity
 export const Test = Type.Object({
@@ -18,8 +20,8 @@ export const RepeatPolicy = Type.Object({
 export const TestRequest = Type.Intersect([
   Test,
   Type.Object({
-    createdAt: Type.String({ format: "date-time" }),
-    repeatPolicy: Type.Optional(RepeatPolicy),
+    startAt: Type.String({ format: "date-time" }),
+    repeatPolicy: RepeatPolicy,
   }),
 ]);
 
@@ -74,3 +76,9 @@ export const TestReport = Type.Object({
 });
 
 export type TestReport = Static<typeof TestReport>;
+
+const ajv = new Ajv({ allErrors: true });
+addFormats.default(ajv);
+
+export const testResultValidator = ajv.compile<TestResult>(TestResult);
+export const testRequestValidator = ajv.compile<TestRequest>(TestRequest);
